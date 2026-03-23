@@ -1,21 +1,24 @@
 {
   "name": "lumemoth",
-  "version": "1.0.0",
-  "description": "Universal Project Architect",
-  "main": "index.js",
+  "version": "1.0",
+  "description": "Universal Architect & Logic Guard",
+  "main": "index.ts",
   "scripts": {
-    "start": "npx ts-node index.ts"
+    "start": "ts-node index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@types/figures": "^3.0.3",
     "chalk": "^4.1.2",
     "clipboardy": "^2.3.0",
-    "inquirer": "^8.2.4"
+    "figures": "^3.2.0",
+    "inquirer": "^8.2.1"
+  },
+  "bin": {
+    "moth": "./bin.js"
   },
   "devDependencies": {
-    "@types/chalk": "^0.4.31",
-    "@types/clipboardy": "^2.0.4",
-    "@types/inquirer": "^8.2.1",
-    "@types/node": "^18.19.130",
+    "@types/node": "^18.0.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.0"
   }
