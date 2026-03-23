@@ -1,6 +1,7 @@
 <div align="center">
   <h1>🦋 LumeMoth</h1>
   <p><strong>The Intelligent Guardian of Code Integrity</strong></p>
+  <p><em>Created with 🖤 by <strong>Gr33do</strong></em></p>
   <p>
     <a href="#features"><img alt="Status" src="https://img.shields.io/badge/status-active-10B981?style=for-the-badge" /></a>
     <a href="#installation"><img alt="CLI" src="https://img.shields.io/badge/CLI-moth_fly-00F0FF?style=for-the-badge" /></a>
@@ -65,4 +66,5 @@ Contributions, issues, and feature requests are always welcome!
 If you'd like to build new regex rules or custom auto-fixes, we would love to see your Pull Requests.
 
 ## 📄 License
-This project is licensed under the **MIT** license.
+This project is licensed under the **MIT** license.  
+&copy; 2026 Gr33do. All rights reserved.

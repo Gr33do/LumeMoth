@@ -73,7 +73,7 @@ function walkDir(dir: string, callback: (filePath: string) => void) {
 // === 🚀 MAIN ARCHITECT ===
 async function run() {
     console.info(`\n${THEME.primary.bold(`   ${figures.play} L U M E   M O T H`)}  ${THEME.glow('v1.0')}`);
-    console.info(THEME.dim('   High-End Project Architect & Auto-Fixer\n'));
+    console.info(THEME.dim('   High-End Project Architect & Auto-Fixer by ') + THEME.glow.bold('Gr33do\n'));
     drawLine();
 
     const trackedIssues: IssueTrack[] = [];
