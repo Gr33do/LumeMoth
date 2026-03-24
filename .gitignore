@@ -1,3 +1,30 @@
+# Dependencies
 node_modules/
+
+# Build output
 dist/
+*.js.map
+
+# TypeScript
+*.tsbuildinfo
+
+# LumeMoth runtime artifacts (local only, not for version control)
+.lumemoth/
+
+# GitHub auto-generated issue templates
+.github/ISSUES/
+
+# Environment files (should never be committed)
 .env
+.env.local
+.env.*.local
+
+# Editor & OS
+.vscode/
+.idea/
+*.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*

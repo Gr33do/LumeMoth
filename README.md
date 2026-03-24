@@ -1,45 +1,70 @@
 <div align="center">
   <h1>🦋 LumeMoth</h1>
-  <p><strong>The Intelligent Guardian of Code Integrity</strong></p>
+  <p><strong>Multi-Layer Static Analysis Engine — Zero Setup</strong></p>
   <p>
     <a href="#features"><img alt="Status" src="https://img.shields.io/badge/status-active-10B981?style=for-the-badge" /></a>
-    <a href="#installation"><img alt="CLI" src="https://img.shields.io/badge/CLI-moth_fly-00F0FF?style=for-the-badge" /></a>
+    <a href="#usage"><img alt="CLI" src="https://img.shields.io/badge/CLI-moth_fly-00F0FF?style=for-the-badge" /></a>
     <a href="#license"><img alt="License" src="https://img.shields.io/badge/license-MIT-B624FF?style=for-the-badge" /></a>
   </p>
 </div>
 
 ---
 
-**LumeMoth** is a highly specialized developer tool engineered to be the intelligent guardian of your code integrity. It bridges the gap between manual debugging and static code analysis by not only reporting critical logical vulnerabilities but **autonomously neutralizing** them—fixing issues often ignored by conventional compilers or standard linters.
+**LumeMoth** is a zero-setup tool that autonomously scans your codebase across **4 distinct analysis layers**, auto-heals critical issues and generates GitHub tickets — with no cloud APIs, no AI keys, and no external services.
 
-Embedded within an aesthetically striking **Moth-Theme Dashboard**, LumeMoth provides a premium terminal-based user experience.
+No install. No config. Just `moth fly`.
 
 ---
 
 ## ✨ Features
 
-### 🎯 Precision Bug Search (Deep-Scan)
-The tool deeply and recursively scans project directories for critical anti-patterns. A primary focus is "Silenced Errors"—like empty `catch` blocks—that can mask underlying system crashes and compromise overall project stability. LumeMoth brings these dark spots in your code to light.
+### 🎯 Layer 1 — Syntax Analysis
+Uses the **TypeScript Compiler AST** to detect real syntactic errors before they reach the runtime.
 
-### 🛠 Autonomous Self-Healing
-Unlike traditional analysis tools that flood you with warnings, LumeMoth offers an immediate physical solution. Through **Atomic Auto-Fixing**, the tool autonomously rewrites identified problem areas. Missing error handlers are automatically injected and files are updated on disk in milliseconds.
+### 🧠 Layer 2 — Semantic Analysis
+Detects logical anti-patterns that compilers miss:
+- Silent `catch {}` blocks that swallow exceptions
+- Unresolved `TODO` / `FIXME` markers
+- Potential infinite loops without exit conditions
+- Callback hell patterns (deeply nested arrow functions)
 
-### 🎫 Automated Ticket Architecture
-For issues requiring deeper manual review (or specific edge cases), LumeMoth acts as a seamless bridge to your project management. It generates beautifully formatted GitHub Issue error reports on-the-fly and drops them directly into your clipboard.
+### 🔒 Layer 3 — Security Audit
+- Hardcoded secrets, tokens & passwords
+- `eval()` / `new Function()` — Remote Code Execution vectors
+- `innerHTML` — XSS injection points
+- Unencrypted HTTP connections
+- `Math.random()` used for security-sensitive values
 
-### 🌌 Visual Dashboard
-Upon scan completion, LumeMoth presents an elegant, uncluttered summary report (Moth-Style) straight in your terminal. You get a perfect overview of pending tickets, affected files, and successfully healed anti-patterns.
+### ⚡ Layer 4 — Performance Review
+- `console.log` left in production code
+- Sequential `await` inside loops (should use `Promise.all`)
+- `JSON.parse(JSON.stringify())` deep clone anti-pattern
+- `forEach + .push()` instead of `.map()`
+
+### 🛠 Three Scan Modes
+| Mode | Behaviour |
+|---|---|
+| **⚡ Auto-Fix** | Fixes all auto-fixable issues silently. Saves tickets for the rest. |
+| **🔍 Interactive** | Prompts per-issue: Fix / Ticket / Skip. Full control. |
+| **📋 Report Only** | Scan without writing any code. Saves issue templates only. |
+
+### ✅ Dry-Run Validation
+Every fix is validated internally by the TypeScript Compiler API before a single byte is written to disk. Fixes that introduce new errors are automatically rejected.
+
+### 📓 Developer Logbook
+Every healed issue is documented in `.lumemoth/logs/` with the bug, the developer's intent, and a technical refactoring explanation.
+
+### 🎫 Smart Ticket Generation
+Issues that need manual review generate tailored Markdown templates in `.github/ISSUES/`. If the `gh` CLI is present, LumeMoth can open tickets on GitHub automatically.
 
 ---
 
-## 🚀 Installation & Setup
-
-Set up LumeMoth once as a global command-line tool on your system:
+## 🚀 Installation
 
 ```bash
 # 1. Clone the repository
 git clone https://github.com/YourUsername/lumemoth.git
-cd lumemoth
+cd lumemoth/LumeMoth
 
 # 2. Install dependencies
 npm install
@@ -50,23 +75,41 @@ npm link
 
 ## 🦋 Usage
 
-Once the installation is complete, LumeMoth is available as a system-wide terminal command.
-Navigate to *any of your other project folders* and unleash the moth:
+Navigate to **any project folder** and run:
 
 ```bash
 moth fly
 ```
 
-LumeMoth instantly launches in high-performance mode, skips irrelevant directories (like `node_modules` or `.git`), and heals your code. 
-_Customization Note: You can freely adapt the `IGNORE_LIST` and search `PATTERNS` in `index.ts` to fit the specific needs of your project or team._
+LumeMoth recursively scans all `.ts`, `.js`, `.tsx`, `.jsx` files, skips `node_modules` / `.git` / `dist`, presents a mode selector, then scans and acts on findings.
+
+> **No API key, no Ollama, no internet connection required.**
+
+---
+
+## 📁 Project Structure
+
+```
+LumeMoth/
+├── index.ts                     # CLI entry point & orchestration
+├── bin.js                       # Global binary wrapper
+├── src/
+│   ├── AIEngine.ts              # 4-layer static analysis (AST + regex)
+│   ├── DeepRecursionEngine.ts   # Import-graph cross-file context builder
+│   ├── RefactorEngine.ts        # Dry-run TypeScript validation
+│   ├── Logbook.ts               # Developer learning log writer
+│   └── TicketManager.ts         # GitHub issue template generator
+└── .lumemoth/
+    └── logs/                    # Auto-generated fix logs (local only, gitignored)
+```
+
+---
 
 ## 🤝 Contributing
-Contributions, issues, and feature requests are always welcome! 
-If you'd like to build new regex rules or custom auto-fixes, we would love to see your Pull Requests.
+Contributions, new detection rules and custom auto-fixes are always welcome!
 
 ## 📄 License
-This project is **100% Free and Open Source** under the **MIT** license.  
-Anyone is allowed to use, modify, copy, and distribute this software however they like! 🦋
+**MIT** — Free and Open Source. Use, modify, and distribute however you like. 🦋
 
 ---
 <p align="center">
