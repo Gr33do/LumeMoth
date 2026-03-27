@@ -2,30 +2,37 @@ import * as ts from 'typescript';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
+import * as crypto from 'crypto';
 
 export class RefactorEngine {
     private projectRoot: string;
 
     constructor(projectRoot: string) {
-        this.projectRoot = projectRoot;
+        this.projectRoot = path.resolve(projectRoot);
     }
 
-    /**
-     * Validates refactored code via TypeScript syntax check BEFORE writing to disk.
-     * Temp file is written to OS temp dir so the scanner never picks it up.
-     */
     public attemptDryRun(originalFilePath: string, newContent: string): boolean {
-        const originalErrors = this.countSyntaxErrors(fs.readFileSync(originalFilePath, 'utf-8'), originalFilePath);
+        const resolvedPath = path.resolve(originalFilePath);
+        if (!resolvedPath.startsWith(this.projectRoot + path.sep)) {
+            throw new Error('Invalid file path: outside project root');
+        }
 
-        const tmpExt = path.extname(originalFilePath) || '.ts';
-        const tmpFilePath = path.join(os.tmpdir(), `lumemoth_dryrun_${Date.now()}${tmpExt}`);
+        const originalErrors = this.countSyntaxErrors(fs.readFileSync(resolvedPath, 'utf-8'), resolvedPath);
+
+        const tmpExt = path.extname(resolvedPath) || '.ts';
+        const randomId = crypto.randomBytes(8).toString('hex');
+        const tmpFilePath = path.join(os.tmpdir(), `lumemoth_dryrun_${randomId}${tmpExt}`);
 
         let newErrors = 0;
         try {
             fs.writeFileSync(tmpFilePath, newContent, 'utf-8');
             newErrors = this.countSyntaxErrors(newContent, tmpFilePath);
         } finally {
-            try { fs.unlinkSync(tmpFilePath); } catch (_) { /* ignore */ }
+            try {
+                fs.unlinkSync(tmpFilePath);
+            } catch (_) {
+                // ignore
+            }
         }
 
         return newErrors <= originalErrors;
@@ -38,6 +45,11 @@ export class RefactorEngine {
     }
 
     public applyFix(filePath: string, newContent: string): void {
-        fs.writeFileSync(filePath, newContent, 'utf-8');
+        const resolvedPath = path.resolve(filePath);
+        if (!resolvedPath.startsWith(this.projectRoot + path.sep)) {
+            throw new Error('Invalid file path: outside project root');
+        }
+
+        fs.writeFileSync(resolvedPath, newContent, 'utf-8');
     }
 }
