@@ -142,7 +142,7 @@ async function run() {
     const tracked: { file: string; problem: string; layer: string; sev: string; autoFixed: boolean; status: string }[] = [];
     let filesWithIssues = 0;
 
-    // ── Header ─────────────────────────────────────────────────────────────────────
+    // ── Header ─────────��───────────────────────────────────────────────────────────
     console.info(topBar());
     console.info(row(' ' + T.primary.bold('SCAN INITIALISED') + T.border('  ─────────────────────────────────────')));
     console.info(midBar());
@@ -282,9 +282,13 @@ async function run() {
                 if (created) {
                     console.info(`  ${T.success(figures.tick)}  GitHub issue created!`);
                 } else {
-                    const mdPath = ticketManager.writeTemplate(issue, rel);
-                    clipboard.writeSync(fs.readFileSync(mdPath, 'utf8'));
-                    console.info(`  ${T.warning(figures.info)}  Ticket saved & copied to clipboard.`);
+                    try {
+                        const mdPath = ticketManager.writeTemplate(issue, rel);
+                        clipboard.writeSync(fs.readFileSync(mdPath, 'utf8'));
+                        console.info(`  ${T.warning(figures.info)}  Ticket saved & copied to clipboard.`);
+                    } catch (e) {
+                        console.error(`  ${T.critical(figures.cross)}  Failed to create ticket:`, e instanceof Error ? e.message : String(e));
+                    }
                 }
                 tracked.push({ file: rel, problem: issue.problem, layer: issue.layer, sev: issue.severity, autoFixed: false, status: 'Ticket' });
             } else {
@@ -351,7 +355,14 @@ async function run() {
 
 const args = process.argv.slice(2);
 if (args[0] === 'fly' || args.length === 0) {
-    run().catch(e => console.error(chalk.hex('#EF4444')('\n[FATAL ERROR]'), e));
+    // ✅ FIXED: Proper error handling with exit code
+    run().catch(e => {
+        console.error(chalk.hex('#EF4444')('\n[FATAL ERROR]'), e instanceof Error ? e.message : String(e));
+        if (e instanceof Error && e.stack) {
+            console.error(chalk.hex('#EF4444')('Stack trace:'), e.stack);
+        }
+        process.exit(1);
+    });
 } else {
     console.info(chalk.hex('#E2E8F0')('\n🦋 Usage: ') + chalk.hex('#B624FF').bold('moth fly') + '\n');
 }
