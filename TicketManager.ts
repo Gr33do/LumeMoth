@@ -17,8 +17,13 @@ export class TicketManager {
         }
 
         const issuesDir = path.join(this.projectRoot, '.github', 'ISSUES');
-        if (!fs.existsSync(issuesDir)) {
-            fs.mkdirSync(issuesDir, { recursive: true });
+        
+        try {
+            if (!fs.existsSync(issuesDir)) {
+                fs.mkdirSync(issuesDir, { recursive: true });
+            }
+        } catch (e) {
+            throw new Error(`Failed to create issues directory: ${e instanceof Error ? e.message : String(e)}`);
         }
 
         const sanitize = (input: string, maxLen: number = 500): string => {
@@ -50,14 +55,34 @@ ${sanitize(issue.explanation, 1000)}
 
         const filename = `lumemoth_ticket_${Date.now()}.md`;
         const filePath = path.join(issuesDir, filename);
-        fs.writeFileSync(filePath, template, 'utf-8');
+        
+        try {
+            fs.writeFileSync(filePath, template, 'utf-8');
+        } catch (e) {
+            throw new Error(`Failed to write ticket template to ${filePath}: ${e instanceof Error ? e.message : String(e)}`);
+        }
 
         return filePath;
     }
 
     public createRemoteIssue(issue: LumeIssue, targetFile: string): boolean {
         const title = `[${issue.layer}] LumeMoth finding in ${targetFile}`;
-        const bodyPath = this.writeTemplate(issue, targetFile);
+        
+        let bodyPath: string;
+        try {
+            bodyPath = this.writeTemplate(issue, targetFile);
+        } catch (e) {
+            console.error('Failed to create ticket template:', e instanceof Error ? e.message : String(e));
+            return false;
+        }
+
+        // Validate that bodyPath is within projectRoot (prevent injection)
+        const resolvedBodyPath = path.resolve(bodyPath);
+        const resolvedProjectRoot = path.resolve(this.projectRoot);
+        if (!resolvedBodyPath.startsWith(resolvedProjectRoot)) {
+            console.error('Security validation failed: body path is outside project root');
+            return false;
+        }
 
         try {
             execFileSync('gh', ['--version'], { stdio: 'ignore' });
@@ -67,6 +92,12 @@ ${sanitize(issue.explanation, 1000)}
             });
             return true;
         } catch (e) {
+            const errorMsg = e instanceof Error ? e.message : String(e);
+            console.error(`Failed to create GitHub issue: ${errorMsg}`);
+            console.error('Possible causes:');
+            console.error('  - GitHub CLI (gh) is not installed');
+            console.error('  - Not authenticated with GitHub (run: gh auth login)');
+            console.error('  - Not in a Git repository or not on GitHub');
             return false;
         }
     }
